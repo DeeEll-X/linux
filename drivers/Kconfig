@@ -59,6 +59,8 @@ source "drivers/input/Kconfig"
 
 source "drivers/char/Kconfig"
 
+source "drivers/char/scull/Kconfig"
+
 source "drivers/i2c/Kconfig"
 
 source "drivers/i3c/Kconfig"
