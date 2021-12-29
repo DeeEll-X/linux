@@ -59,7 +59,7 @@ module! {
 
 struct ScullModule {
     _reg: Pin<Box<chrdev::Registration<scull_nr_devs>>>,
-
+    _devices: Ref<ScullDevices>,
 
 }
 
@@ -71,11 +71,15 @@ impl KernelModule for ScullModule {
         let mut reg = Registration::new_pinned(name, scull_minor, module)?;
 
         // there are $(scull_nr_devs) minors in this case.
-        for dev in (0..scull_nr_devs){
+        for _ in 0..scull_nr_devs {
             reg.as_mut().register::<ScullFile>()?;
         }
 
-
+        // TODO
+        // let mut devices = sculldevices::ScullDevices::new(scull_nr_devs,
+        //         scull_quantum, 
+        //         scull_qset,
+        //         reg.into().)
         
         Ok(Self { _reg: reg })
     }

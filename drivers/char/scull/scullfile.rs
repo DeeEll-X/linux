@@ -107,8 +107,8 @@ impl IoctlHandler for ScullFile{
     }
 }
 
-impl FileOpener<Ref<ScullDevices>> for ScullFile{
-    fn open(dev: &Ref<ScullDevices>, file: &File) -> Result<Self::Wrapper> {
+impl FileOpener<Ref<ScullDev>> for ScullFile{
+    fn open(dev: &Ref<ScullDev>, file: &File) -> Result<Self::Wrapper> {
         Self::new(dev.clone(), file.cred().clone())
     }
 }
