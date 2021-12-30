@@ -2,23 +2,23 @@
 use kernel::{
     bindings, c_types,
     file::File,
-    file_operations::{FileOpener, FileOperations, IoctlCommand, IoctlHandler}
+    file_operations::{FileOpener, FileOperations, IoctlCommand, IoctlHandler, SeekFrom},
     io_buffer::{IoBufferReader, IoBufferWriter},
     prelude::*,
-    sync::{Ref, RefBorrow}
+    sync::{Ref, RefBorrow, UniqueRef},
     user_ptr::{UserSlicePtr, UserSlicePtrReader, UserSlicePtrWriter},
 };
 
 use crate::{
-    sculldevices::ScullDevices,
+    sculldevices::ScullDev,
 };
 
 pub(crate) struct ScullFile {
-    dev: Ref<ScullDevices>,
+    dev: Ref<ScullDev>,
 }
 
 impl ScullFile {
-    fn new(dev: Ref<ScullDevices>) -> Result<Ref<Self>> {
+    fn new(dev: Ref<ScullDev>) -> Result<Ref<Self>> {
         // TODO
         let mut scullfile = Pin::from(UniqueRef::try_new(Self {
             dev,
@@ -48,16 +48,16 @@ impl IoctlHandler for ScullFile{
         _arg: usize
     ) -> Result<i32> {
         //TODO
-        match cmd {
-            bindings::SCULL_IOCRESET => ,
-            bindings::SCULL_IOCTQUANTUM => ,
-            bindings::SCULL_IOCTQSET => ,
-            bindings::SCULL_IOCQQUANTUM => ,
-            bindings::SCULL_IOCQQSET => ,
-            bindings::SCULL_IOCHQUANTUM => ,
-            bindings::SCULL_IOCHQSET => ,
-            _ => return Err(Error::EINVAL),
-        }
+        // match cmd {
+        //     bindings::SCULL_IOCRESET => ,
+        //     bindings::SCULL_IOCTQUANTUM => ,
+        //     bindings::SCULL_IOCTQSET => ,
+        //     bindings::SCULL_IOCQQUANTUM => ,
+        //     bindings::SCULL_IOCQQSET => ,
+        //     bindings::SCULL_IOCHQUANTUM => ,
+        //     bindings::SCULL_IOCHQSET => ,
+        //     _ => return Err(Error::EINVAL),
+        // }
         Err(Error::EINVAL)
     }
 
@@ -68,11 +68,11 @@ impl IoctlHandler for ScullFile{
         reader: &mut UserSlicePtrReader,
     ) -> Result<i32> {
         // TODO
-        match cmd {
-            bindings::SCULL_IOCGQUANTUM => ,
-            bindings::SCULL_IOCGQSET => ,
-            _ => return Err(Error::EINVAL),
-        }
+        // match cmd {
+        //     bindings::SCULL_IOCGQUANTUM => ,
+        //     bindings::SCULL_IOCGQSET => ,
+        //     _ => return Err(Error::EINVAL),
+        // }
         Ok(0)
     }
 
@@ -83,11 +83,11 @@ impl IoctlHandler for ScullFile{
         writer: &mut UserSlicePtrWriter,
     ) -> Result<i32> {
         // TODO
-        match cmd {
-            bindings::SCULL_IOCSQUANTUM =>, 
-            bindings::SCULL_IOCSQSET => ,
-            _ => return Err(Error::EINVAL),
-        }
+        // match cmd {
+        //     bindings::SCULL_IOCSQUANTUM =>, 
+        //     bindings::SCULL_IOCSQSET => ,
+        //     _ => return Err(Error::EINVAL),
+        // }
         Ok(0)
     }
     
@@ -98,11 +98,11 @@ impl IoctlHandler for ScullFile{
         data: UserSlicePtr,
     ) -> Result<i32> {
         // TODO
-        match cmd {
-            bindings::SCULL_IOCXQUANTUM =>,
-            bindings::SCULL_IOCXQSET => ,
-            _ => return Err(Error::EINVAL),
-        }
+        // match cmd {
+        //     bindings::SCULL_IOCXQUANTUM =>,
+        //     bindings::SCULL_IOCXQSET => ,
+        //     _ => return Err(Error::EINVAL),
+        // }
         Ok(0)
     }
 }
@@ -113,7 +113,7 @@ impl FileOpener<Ref<ScullDev>> for ScullFile{
     }
 }
 
-imple FileOperations for ScullFile {
+impl FileOperations for ScullFile {
     type Wrapper = Ref<Self>;
 
     /* the c version: llseek, read, write, unlocked_ioctl, open, release */

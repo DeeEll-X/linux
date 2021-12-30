@@ -8,27 +8,20 @@
 #![feature(global_asm, allocator_api, concat_idents, generic_associated_types)]
 
 use kernel::{
-    bindings,
-    io_buffer::IoBufferWriter,
-    linked_list::{GetLinks, GetLinksWrapped, Links},
     chrdev::Registration,
     prelude::*,
     str::CStr,
-    sync::Ref,
-    file::File,
 };
 
-// mod allocation;
-mod context;
 mod scullfile;
 mod sculldevices;
-// mod defs;
-// mod range_alloc;
 
-use {context::Context};
+use {
+    scullfile::ScullFile
+};
 
 module! {
-    type: ScullModule,
+    type: ScullModule<scull_nr_devs>,
     name: b"rust_scull",
     author: b"Xiang Yuxin",
     description: b"Linux Device Driver Example in Rust",
@@ -57,37 +50,26 @@ module! {
     }
 }
 
-struct ScullModule {
-    _reg: Pin<Box<chrdev::Registration<scull_nr_devs>>>,
-    _devices: Ref<ScullDevices>,
-
+struct ScullModule<const N:usize> {
+    _reg: Pin<Box<Registration<N>>>
 }
 
-impl KernelModule for ScullModule {
+impl<const N:usize> KernelModule for ScullModule<N> {
     fn init(name: &'static CStr, module: &'static kernel::ThisModule) -> Result<Self> {
-        pr_info!("Rust scull(init)\n");
-
         // chardev::new_pinned does not register the device
         let mut reg = Registration::new_pinned(name, scull_minor, module)?;
 
         // there are $(scull_nr_devs) minors in this case.
-        for _ in 0..scull_nr_devs {
+        for _ in 0..N {
             reg.as_mut().register::<ScullFile>()?;
         }
 
-        // TODO
-        // let mut devices = sculldevices::ScullDevices::new(scull_nr_devs,
-        //         scull_quantum, 
-        //         scull_qset,
-        //         reg.into().)
-        
         Ok(Self { _reg: reg })
     }
 }
 
-impl Drop for ScullModule {
-    fn drop(&mut Self){
-        pr_info!("Rust scull(exit)\n");
+impl<const N:usize> Drop for ScullModule<N> {
+    fn drop(&mut self){
     }
 }
 

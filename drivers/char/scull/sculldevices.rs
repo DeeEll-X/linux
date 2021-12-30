@@ -5,11 +5,11 @@ use kernel::{
     prelude::*,
     security,
     sync::{Mutex, Ref, UniqueRef},
-    chrdev::Cdev,
     file_operations,
+    linked_list::List,
 };
 
-use crate::{
+use {
     scullfile::ScullFile,
 };
 
@@ -17,16 +17,16 @@ pub struct ScullQset {
     // void** data
 }
 
-pub struct ScullDev {
-    data: List<Box<ScullQset>>;   /* Pointer to first quantum set */
-    quantum: i32;           /* the current quantum size */
-    qset: i32;      /* the current array size */
-    size: u64;      /* amount of data stored here */
-    cdev: &Cdev; /* Char device structure		*/
+pub(crate) struct ScullDev {
+    data: List<Box<ScullQset>>,   /* Pointer to first quantum set */
+    quantum: i32,           /* the current quantum size */
+    qset: i32,      /* the current array size */
+    size: u64,      /* amount of data stored here */
+    // cdev: &Cdev, /* Char device structure		*/
 }
 
 pub(crate) struct ScullDevices {
-    scull_devices: Vec<Mutex<ScullDev>>;
+    scull_devices: Vec<Mutex<ScullDev>>,
 }
 
 
@@ -50,7 +50,7 @@ impl ScullDevices {
                     quantum: scull_quantum, 
                     qset: scull_qset,
                     size: 0,
-                    cdev: // TODO,
+                    // cdev:  TODO,
                 })
             };
             devices.as_mut().try_push(dev)?;

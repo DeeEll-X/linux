@@ -3,6 +3,7 @@ ccflags-y += -I$(src)
 
 obj-$(CONFIG_SCULL_DRIVER) += main.o pipe.o access.o
 obj-m += scull.o
+obj-$(CONFIG_SCULL_DRIVER_RUST) += rust_scull.o
 # Comment/uncomment the following line to disable/enable debugging
 #DEBUG = y
 
